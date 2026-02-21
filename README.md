@@ -25,6 +25,17 @@ metrics dashboard
 documentation clarity
 
 
+# Big picture flow
+Airflow launches a kubernetes pod operator. The pod operator runs a python script that extracts-loads data from an API to the clickhouse warehouse. Airflow then triggers a dbt job in another kubernetes pod operator that transforms the data in clickhouse for reporting.
+
+Minimum set of images
+
+Airflow image: mostly stock (plus Kubernetes connection bits)
+
+Python job image: contains your extractor code + deps
+
+dbt image: contains dbt + dbt-clickhouse + your dbt project (or pulls it at runtime)
+
 Installing system dependencies for ubuntu 24.04.
 
 
@@ -94,3 +105,6 @@ sudo install kubectl /usr/local/bin/kubectl
 
 
 Use a placeholder secret.yaml but never commit actual passwords. Mention in your README that you use SealedSecrets or ExternalSecrets in "real" prod.
+
+
+operator and executor tradeoffs
