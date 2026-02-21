@@ -1,0 +1,50 @@
+executor: LocalExecutor
+
+postgresql:
+  enabled: false
+
+data:
+  metadataConnection:
+    protocol: postgresql
+    host: postgres.airflow.svc.cluster.local
+    port: 5432
+    db: airflow
+    user: airflow
+    pass: airflow
+    sslmode: disable
+
+# Generate and replace these:
+# Fernet: python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+fernetKey: "REPLACE_WITH_FERNET_KEY"
+
+# Secret key: openssl rand -hex 32
+webserverSecretKey: "REPLACE_WITH_WEBSERVER_SECRET_KEY"
+
+createUserJob:
+  defaultUser:
+    enabled: true
+    role: Admin
+    username: admin
+    email: admin@example.local
+    firstName: Admin
+    lastName: User
+    password: admin
+
+triggerer:
+  enabled: true
+
+# DAGs via git-sync (cleaner than mounting random local folders)
+dags:
+  persistence:
+    enabled: false
+  gitSync:
+    enabled: true
+    repo: "https://github.com/YOUR_ORG/YOUR_DAGS_REPO.git"
+    branch: "main"
+    subPath: "dags"
+    depth: 1
+    wait: 30
+
+webserver:
+  service:
+    type: ClusterIP
