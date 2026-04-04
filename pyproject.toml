@@ -1,0 +1,16 @@
+[project]
+name = "batch-etl"
+version = "0.1.0"
+description = "Batch ETLT Pipeline"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "apache-airflow==2.11.0",
+    "dbt-core>=1.11.6",
+    "dbt-postgres>=1.10.0",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.2.0",
+]

@@ -33,6 +33,11 @@ spec:
               mountPath: /var/lib/clickhouse
             - name: config
               mountPath: /etc/clickhouse-server/config.d
+      # MERGED VOLUMES HERE
+      volumes:
+        - name: config
+          configMap:
+            name: clickhouse-config
   volumeClaimTemplates:
     - metadata:
         name: chdata
@@ -41,17 +46,3 @@ spec:
         resources:
           requests:
             storage: 20Gi
----
-# Mount config.d from ConfigMap (separate from data PVC)
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: clickhouse
-  namespace: data
-spec:
-  template:
-    spec:
-      volumes:
-        - name: config
-          configMap:
-            name: clickhouse-config

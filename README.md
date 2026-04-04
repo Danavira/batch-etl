@@ -1,11 +1,40 @@
-# ETL Pipeline with Minikube
+# Batch ETL Pipeline on Kubernetes
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+## Overview
+
+This project implements an ETL (Extract, Transform, Load) pipeline for processing orders. It simulates data ingestion from an external system, stores raw data in a Postgres OLTP database, transforms it via an ETL script, and loads it into a warehouse schema.
+
+I built this project to demonstrate core data engineering concepts end-to-end: ingestion, orchestration, transformation, analytical serving, and deployment. The tools are interchangeable to some extent; I deliberately chose widely used modern data tools to get hands-on experience with technologies commonly used in production pipelines, and then I designed the project so each tool had a real role. However, the important part is understanding workload separation, reliability, and the data flow that this project demonstrates.
+
+
+## Architecture
+
+```mermaid
+flowchart LR
+    G[Fake Data Generator] --> A[Ingest API]
+    A --> P[(PostgreSQL Raw Tables)]
+    P --> S[Spark ETL Job]
+    S --> C[(ClickHouse Analytics Tables)]
+    AF[Airflow] --> S
+```
+The pipeline flows as follows:
+
+- **Generator**: Acts as an external system that generates order data.
+- **POST /orders**: Endpoint for sending data to the ingestion service.
+- **Ingest API Service**: Receives data via API and inserts it into the database.
+- **Postgres (OLTP Raw Tables)**: Stores raw ingested data.
+- **ETL Script**: Transforms data from raw tables.
+- **Warehouse Schema**: Final destination for transformed data.
+- **Airflow**: Orchestration tool for running the ETL job.
+
+All components are deployed in a Minikube Kubernetes cluster using Docker images.
 
 ```
 batch-etl/                  # repo root (git repo name)
 ├── src/                            # ← all importable/production code
-│   └── batch_etl/                  # or github_jobs_etl, finance_pipeline, etc. — pick a short, descriptive package name
+│   └── batch_etl/                  # or github_jobs_etl, finance_pipeline, etc. — pick a short name
 │       ├── __init__.py
 │       ├── __main__.py             # optional: python -m sales_etl → runs default flow
 │       ├── config/                 # pydantic settings, yaml schemas
@@ -41,32 +70,7 @@ batch-etl/                  # repo root (git repo name)
 ```
 
 
-## Description
 
-This project implements an ETL (Extract, Transform, Load) pipeline for processing orders. It simulates data ingestion from an external system, stores raw data in a Postgres OLTP database, transforms it via an ETL script, and loads it into a warehouse schema.
-
-I built this project to demonstrate core data engineering concepts end-to-end: ingestion, orchestration, transformation, analytical serving, and deployment. The tools are interchangeable to some extent; I deliberately chose widely used modern data tools to get hands-on experience with technologies commonly used in production pipelines, and then I designed the project so each tool had a real role. However, the important part is understanding workload separation, reliability, and the data flow that this project demonstrates.
-
-### Architecture Overview
-
-```mermaid
-flowchart LR
-    G[Fake Data Generator] --> A[Ingest API]
-    A --> P[(PostgreSQL Raw Tables)]
-    P --> S[Spark ETL Job]
-    S --> C[(ClickHouse Analytics Tables)]
-    AF[Airflow] --> S
-```
-The pipeline flows as follows:
-
-- **Generator**: Acts as an external system that generates order data.
-- **POST /orders**: Endpoint for sending data to the ingestion service.
-- **Ingest API Service**: Receives data via API and inserts it into the database.
-- **Postgres (OLTP Raw Tables)**: Stores raw ingested data.
-- **ETL Script**: Transforms data from raw tables.
-- **Warehouse Schema**: Final destination for transformed data.
-
-All components are deployed in a Minikube Kubernetes cluster using Docker containers.
 
 ## Prerequisites
 
@@ -178,7 +182,7 @@ psql -h localhost -U user -d dbname -c "SELECT * FROM warehouse.orders_transform
 - **Minikube not starting**: Ensure Docker is running and virtualization is enabled.
 - **Pod crashes**: Check logs with `kubectl logs <pod-name>`.
 - **Connection refused**: Verify services are exposed and port-forwarded correctly.
-- **Out of memory**: Increase Minikube resources: `minikube start --memory=4096 --cpus=2`.
+- **Out of memory**: Increase Minikube resources: `minikube start --memory=4096 --cpus=2`. Reduce fake data generator rate.
 
 
 ## Design Decisions, Rationale, and Trade-offs
