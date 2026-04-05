@@ -1,6 +1,0 @@
-resources:
-  - namespace.yaml
-  - secret.yaml
-  - headless-service.yaml
-  - service.yaml
-  - statefulset.yaml
