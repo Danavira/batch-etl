@@ -13,60 +13,50 @@ I built this project to demonstrate core data engineering concepts end-to-end: i
 
 ```mermaid
 flowchart LR
-    G[Fake Data Generator] --> A[Ingest API]
-    A --> P[(PostgreSQL Raw Tables)]
+    G[Fake Data Generator] --> P[(PostgreSQL Raw Tables)]
     P --> S[Spark ETL Job]
     S --> C[(ClickHouse Analytics Tables)]
     AF[Airflow] --> S
 ```
 The pipeline flows as follows:
 
-- **Generator**: Acts as an external system that generates order data.
-- **POST /orders**: Endpoint for sending data to the ingestion service.
-- **Ingest API Service**: Receives data via API and inserts it into the database.
+- **Generator**: Produces fake user and transaction records and writes directly to Postgres.
 - **Postgres (OLTP Raw Tables)**: Stores raw ingested data.
-- **ETL Script**: Transforms data from raw tables.
-- **Warehouse Schema**: Final destination for transformed data.
-- **Airflow**: Orchestration tool for running the ETL job.
+- **Spark ETL Job**: Reads from Postgres, transforms the data, and loads it into ClickHouse.
+- **ClickHouse (Analytics Tables)**: Analytical store using `ReplacingMergeTree` for deduplication.
+- **Airflow**: Orchestrates Spark job scheduling and watermark tracking.
 
-All components are deployed in a Minikube Kubernetes cluster using Docker images.
+All components are deployed on Kubernetes.
 
 ```
-batch-etl/                  # repo root (git repo name)
-├── src/                            # ← all importable/production code
-│   └── batch_etl/                  # or github_jobs_etl, finance_pipeline, etc. — pick a short name
+batch-etl/
+├── src/
+│   └── batch_etl/              # importable ETL package
 │       ├── __init__.py
-│       ├── __main__.py             # optional: python -m sales_etl → runs default flow
-│       ├── config/                 # pydantic settings, yaml schemas
-│       │   ├── settings.py
+│       ├── main.py             # pipeline entrypoint
+│       ├── config/             # pydantic settings, yaml schemas
 │       │   └── schemas/
-│       ├── extract/                # connectors (api, s3, postgres, kafka, etc.)
-│       ├── transform/              # core business logic, spark/pandas/dbt-like funcs
-│       ├── load/                   # writers, upsert logic, validation
-│       ├── utils/                  # logging, retries, metrics, date helpers
-│       ├── flows/                  # if using Prefect/Dagster/Airflow → flow definitions here
-│       └── entrypoints/            # CLI commands or main scripts (e.g. main.py, run_daily.py)
-├── tests/                          # pytest suite — mirrors src/ structure
-│   ├── unit/
-│   ├── integration/
-│   └── conftest.py
-├── config/                         # runtime configs (not committed secrets)
-│   ├── dev.yaml
-│   ├── prod.yaml                   # or use secrets / env vars in k8s
-│   └── base.yaml
-├── minikube/                     # ← Minikube / K8s manifests (very portfolio-friendly)
-│   ├── deployment.yaml             # your main Job / CronJob
-│   ├── configmap.yaml              # non-secret config
-│   ├── secret.yaml                 # example (gitignored) or use sealed-secrets
-│   ├── cronjob.yaml                # if scheduled
-│   └── serviceaccount.yaml         # if needed for RBAC
-├── .dockerignore                   # critical: exclude tests/, .git/, __pycache__ etc.
-├── Dockerfile                      # single- or multi-stage
-├── pyproject.toml                  # uv + build-system = hatch/setuptools/PDM
-├── uv.lock                         # exact deps
-├── README.md                       # how to run locally, in docker, in minikube
-├── .gitignore
-└── Makefile                        # optional: make build, make test, make minikube-up, etc.
+│       ├── extract/            # Postgres connectors and extraction logic
+│       ├── transform/          # Spark transformation logic
+│       ├── load/               # ClickHouse writers and upsert logic
+│       ├── flows/              # Prefect/Airflow flow definitions
+│       └── utils/              # logging, retries, Spark session, CDC helpers
+├── dags/                       # Airflow DAG definitions
+│   ├── run_main.py
+│   ├── run_backfill.py
+│   └── run_incremental.py
+├── generator/                  # standalone fake data generator
+│   ├── data_generator.py
+│   └── requirements.txt
+├── scripts/                    # one-off and dev helper scripts
+├── docs/                       # architecture notes and schema registry
+├── tests/
+├── Dockerfile                  # ETL job image
+├── Dockerfile.generator        # data generator image
+├── pyproject.toml              # uv + build-system
+├── uv.lock
+├── Makefile
+└── README.md
 ```
 
 
