@@ -1,4 +1,0 @@
-requests
-sqlalchemy
-psycopg2-binary
-python-dateutil

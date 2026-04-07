@@ -463,6 +463,7 @@ dependencies = [
     { name = "apache-airflow" },
     { name = "dbt-core" },
     { name = "dbt-postgres" },
+    { name = "mimesis" },
 ]
 
 [package.dev-dependencies]
@@ -475,6 +476,7 @@ requires-dist = [
     { name = "apache-airflow", specifier = "==2.11.0" },
     { name = "dbt-core", specifier = ">=1.11.6" },
     { name = "dbt-postgres", specifier = ">=1.10.0" },
+    { name = "mimesis", specifier = "==19.1.0" },
 ]
 
 [package.metadata.requires-dev]
@@ -1930,6 +1932,15 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/13/3b/c21b74ac17befdf17b286494b02221b7a84affb1d410ff86e38ba0e14b13/methodtools-0.4.7.tar.gz", hash = "sha256:e213439dd64cfe60213f7015da6efe5dd4003fd89376db3baa09fe13ec2bb0ba", size = 3586, upload-time = "2023-02-05T13:17:54.473Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/b6/4b/6497ffb463b1b75e04b348ef31070606d43e3c503fa295383538ded999c9/methodtools-0.4.7-py2.py3-none-any.whl", hash = "sha256:5e188c780b236adc12e75b5f078c5afb419ef99eb648569fc6d7071f053a1f11", size = 4038, upload-time = "2024-08-23T09:18:03.631Z" },
+]
+
+[[package]]
+name = "mimesis"
+version = "19.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/12/bf/1612e48b9eea7fa39e27600e94b9b267b37da749fcdf019e5e6a892ba2ec/mimesis-19.1.0.tar.gz", hash = "sha256:af4f14852a97657c5dbfad860be90c0efe97bf3758809e034b6581a45b13814b", size = 18252875, upload-time = "2026-01-11T09:14:58.969Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/40/f2/39da33ad3c10956d9ee7cdea3c3ee92e98c529b2994ed7c36a208b497603/mimesis-19.1.0-py3-none-any.whl", hash = "sha256:cf2ea4674819eaf386a2b8d28ded450968f1770fcb23f6c6ef884f61727bb4e6", size = 4464087, upload-time = "2026-01-11T09:14:55.738Z" },
 ]
 
 [[package]]

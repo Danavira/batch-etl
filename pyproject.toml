@@ -8,6 +8,7 @@ dependencies = [
     "apache-airflow==2.11.0",
     "dbt-core>=1.11.6",
     "dbt-postgres>=1.10.0",
+    "mimesis==19.1.0",
 ]
 
 [dependency-groups]

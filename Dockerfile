@@ -10,7 +10,7 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 COPY pyproject.toml uv.lock ./
 
 # Install dependencies using uv into the system python
-RUN uv pip install --system -r pyproject.toml
+RUN uv sync --system --frozen
 
 # Switch back to the airflow user
 USER airflow
