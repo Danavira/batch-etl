@@ -30,11 +30,11 @@ class User(BaseModel):
     city: Optional[str] = Field(default=None, max_length=100)
     state: Optional[str] = Field(default=None, max_length=100)
     postal_code: Optional[str] = Field(default=None, max_length=20)
-    country: str = Field(default="Indonesia", max_length=100)
+    country: str = Field(default="Japan", max_length=100)
 
     account_number: str = Field(..., min_length=5, max_length=30)
     account_type: AccountType = "savings"
-    currency: str = Field(default="IDR", min_length=3, max_length=3)
+    currency: str = Field(default="JPY", min_length=3, max_length=3)
     balance: Decimal = Field(default=Decimal("0.00"), max_digits=18, decimal_places=2)
 
     kyc_status: KYCStatus = "pending"
