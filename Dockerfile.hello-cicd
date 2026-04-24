@@ -1,6 +1,7 @@
 FROM python:3.12-slim
 
 WORKDIR /app
+ENV APP_NAME=hello-cicd
 
 COPY generator/hello_cicd.py .
 
